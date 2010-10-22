@@ -11,6 +11,11 @@ from wxPython.wx import *
 stopwords_file = 'C:\\Documents and Settings\\516026\\Desktop\\stopwords.txt'
 outfile = 'C:\\Documents and Settings\\516026\\Desktop\\outwords.txt'
 
+def compare_columns(a, b):
+    # sort on descending index 1    
+    return cmp(b[1], a[1])
+
+    
 if __name__ == '__main__':
     stopwords = []
     for item in open(stopwords_file).readlines():
@@ -31,8 +36,11 @@ if __name__ == '__main__':
     dialog.Destroy()
     my_reader = csv.reader(open(csv_file))
     out_words = []
+    out_dict = {}
+    out_count = 0
     exclude = set(string.punctuation)
     for item in my_reader:
+        out_count += 1
         print item
         s = item[5] 
         s = ''.join(ch for ch in s if ch not in exclude)
@@ -43,10 +51,23 @@ if __name__ == '__main__':
             if stopwords.count(words) == 0:
                 print words
                 out_words.append(words)
-    my_file = open(outfile, 'w')
-    for word in out_words:
-        my_file.write(word)
-        my_file.write('\n')
-    my_file.close()
+                if out_dict.has_key(words):
+                    out_dict[words]+= 1
+                else:
+                    out_dict[words] = 1
+    #my_file = open(outfile, 'w')
+    #for word in out_words:
+    #    my_file.write(word)
+    #   my_file.write('\n')
+    #my_file.close()
+    word_count = []
+    for words in out_dict.keys():
+        #print words + ': ' + `out_dict[words]`
+        word_count.append([words,out_dict[words]])
+    out = sorted(word_count, compare_columns)
+    print out
+    print out_count
+    
+        
 
         
